@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+using System;
 using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
-using System.Drawing;
-using System.Linq;
 using System.Security.Principal;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace WindowsFormsApplication2
@@ -34,22 +28,21 @@ namespace WindowsFormsApplication2
 
         private void Form1_Load(object sender, EventArgs e)
         {
-           
-            }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
             if (!IsAdmin())
             {
                 RestartElevated();
             }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
             string ssid = this.textBox1.Text, key = textBox2.Text;
-            bool connect = true;
+            bool connect = false; 
             if (!connect)
             {
                 if (this.textBox1.Text == null || this.textBox1.Text == "")
                 {
-                    MessageBox.Show("SSID cannot be left blank !",
+                    MessageBox.Show("SSID cannot be left blank!",
                     "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 else
@@ -57,7 +50,7 @@ namespace WindowsFormsApplication2
 
                     if (textBox2.Text == null || textBox2.Text == "")
                     {
-                        MessageBox.Show("Key value cannot be left blank !",
+                        MessageBox.Show("Key value cannot be left blank!",
                         "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                     else
@@ -65,11 +58,6 @@ namespace WindowsFormsApplication2
                         if (key.Length >= 6)
                         {
                             vwifi(ssid, key, true);
-                            MessageBox.Show("Connected!",
-                        "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                            this.textBox1.Enabled = false;
-                            textBox2.Enabled = false;
-                            button1.Text = "Stop";
                             connect = true;
                         }
                         else
@@ -94,7 +82,7 @@ namespace WindowsFormsApplication2
 
         private void vwifi(string ssid, string key, bool status)
         {
-            
+            button1.Text = "Loading...";
             ProcessStartInfo processStartInfo = new ProcessStartInfo("cmd.exe");
             processStartInfo.RedirectStandardInput = true;
             processStartInfo.RedirectStandardOutput = true;
@@ -116,7 +104,11 @@ namespace WindowsFormsApplication2
                }
            }
 
+            this.textBox1.Enabled = false;
+            textBox2.Enabled = false;
+            button1.Text = "Stop";
         }
+
         public static bool IsAdmin()
         {
             WindowsIdentity id = WindowsIdentity.GetCurrent();
@@ -126,11 +118,9 @@ namespace WindowsFormsApplication2
 
         public void RestartElevated()
         {
-            MessageBox.Show("Required to restart! No admin acess!",
-                        "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
             ProcessStartInfo startInfo = new ProcessStartInfo();
             startInfo.UseShellExecute = true;
-            startInfo.CreateNoWindow = true;
+            startInfo.CreateNoWindow = false;
             startInfo.WorkingDirectory = Environment.CurrentDirectory;
             startInfo.FileName = System.Windows.Forms.Application.ExecutablePath;
             startInfo.Verb = "runas";
